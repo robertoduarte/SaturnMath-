@@ -425,20 +425,7 @@ namespace SaturnMath::Hardware
         else if constexpr (shift > 16)
         {
             __asm__ volatile("xtrct %[H], %[L]\n\t" : [L] "+r"(macl) : [H] "r"(mach));
-            constexpr int remainingRightShift = shift - 16;
-            if constexpr (remainingRightShift == 15) {
-                __asm__ volatile("shlr8 %[reg]\n\t add %[reg], %[reg]\n\t shlr8 %[reg]\n\t" : [reg] "+r"(macl));
-            }
-            else if constexpr (remainingRightShift == 14) {
-                __asm__ volatile("shlr8 %[reg]\n\t shll2 %[reg]\n\t shlr8 %[reg]\n\t" : [reg] "+r"(macl));
-            }
-            else {
-                if constexpr (remainingRightShift >= 8) { __asm__ volatile("shlr8 %[reg]\n\t" : [reg] "+r"(macl)); }
-                constexpr int remainingRightShift2 = (remainingRightShift >= 8) ? remainingRightShift - 8 : remainingRightShift;
-                if constexpr (remainingRightShift2 >= 4) { __asm__ volatile("shlr2 %[reg]\n\t shlr2 %[reg]\n\t" : [reg] "+r"(macl)); }
-                else if constexpr (remainingRightShift2 >= 2) { __asm__ volatile("shlr2 %[reg]\n\t" : [reg] "+r"(macl)); }
-                if constexpr (remainingRightShift2 % 2 != 0) { __asm__ volatile("shlr %[reg]\n\t" : [reg] "+r"(macl)); }
-            }
+            ArithmeticShiftRight<shift - 16>(macl);
             result = macl;
         }
         else

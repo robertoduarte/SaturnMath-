@@ -201,7 +201,10 @@ namespace SaturnMath::Types
         {
             if consteval
             {
-                return X * vec.X + Y * vec.Y + Z * vec.Z;
+                int64_t sum = static_cast<int64_t>(X.RawValue()) * vec.X.RawValue()
+                            + static_cast<int64_t>(Y.RawValue()) * vec.Y.RawValue()
+                            + static_cast<int64_t>(Z.RawValue()) * vec.Z.RawValue();
+                return T::BuildRaw(static_cast<int32_t>(sum >> F));
             }
             else
             {
